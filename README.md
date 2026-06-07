@@ -15,12 +15,48 @@ engines and handles the batching, parallelism, format conversion, and safety rul
 
 ## Install
 
+### From source (clone the repo)
+
+This is the supported way to run it today — no PyPI account or upload needed.
+
+```bash
+git clone https://github.com/worko-dev/workopix.git
+cd workopix
+pip install --user .            # core (PNG, JPEG, WebP)
+pip install --user ".[avif]"    # add AVIF support
+```
+
+This installs a `workopix` command. If your shell reports `workopix: command
+not found`, the user scripts directory isn't on your `PATH`:
+
+```bash
+# macOS / Linux — add this to ~/.zshrc or ~/.bashrc
+export PATH="$(python3 -m site --user-base)/bin:$PATH"
+```
+
+Prefer an isolated install? Either of these avoids the `PATH` step entirely:
+
+```bash
+pipx install .                  # recommended: isolated, always on PATH
+# — or a virtualenv —
+python3 -m venv .venv && source .venv/bin/activate && pip install ".[avif]"
+```
+
+No install at all — the tool is a single file, so this always works:
+
+```bash
+pip install --user Pillow pillow-avif-plugin
+python3 workopix.py ./photos
+```
+
+### From PyPI (once published)
+
 ```bash
 pip install workopix            # core (PNG, JPEG, WebP)
 pip install "workopix[avif]"    # add AVIF support
 ```
 
-That alone works using Pillow. To unlock the best output, install the native encoders —
+Either route works using Pillow. To unlock the best output, install the native encoders —
 `workopix` auto-detects whatever is present:
 
 ```bash
