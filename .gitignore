@@ -11,16 +11,10 @@ env/
 
 # Tool output
 compressed/
+photos/
 *.tmp
 
 # OS / editor
 .DS_Store
 .idea/
 .vscode/
-
-# Local-only files (not part of the published package)
-imgsquish.py
-CLAUDE_CODE_BRIEF.md
-photos/
-_photos_raw/
-_compressed/
