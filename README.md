@@ -10,7 +10,8 @@ and **never touches your originals**.
 ```bash
 git clone https://github.com/worko-dev/workopix.git
 cd workopix
-pip install --user ".[avif]"     # drop [avif] if you don't need AVIF
+pip install --user .            # core (PNG, JPEG, WebP)
+pip install --user ".[avif]"    # add AVIF support
 ```
 
 If your shell then says `workopix: command not found`, the user scripts dir isn't on your
@@ -43,18 +44,18 @@ workopix ./photos --dry-run              # preview, write nothing
 
 ## Options
 
-| Flag | Description |
-|------|-------------|
-| `path` | Image file or folder to process |
-| `-o, --output-dir` | Output folder (default: `./compressed`) |
-| `-r, --recursive` | Recurse into subfolders |
-| `-q, --quality` | Lossy quality 0–100 (default: 80) |
-| `--convert FORMAT` | Convert every image to `png`, `jpeg`, `webp`, or `avif` |
-| `--lossless` | Lossless PNG / WebP / AVIF path |
-| `--max-width N` / `--max-height N` | Downscale if larger than N px |
-| `--keep-metadata` | Preserve EXIF/metadata (stripped by default) |
-| `--workers N` | Parallel workers (default: all CPU cores) |
-| `--dry-run` | Show the plan without writing files |
+| Flag                               | Description                                             |
+| ---------------------------------- | ------------------------------------------------------- |
+| `path`                             | Image file or folder to process                         |
+| `-o, --output-dir`                 | Output folder (default: `./compressed`)                 |
+| `-r, --recursive`                  | Recurse into subfolders                                 |
+| `-q, --quality`                    | Lossy quality 0–100 (default: 80)                       |
+| `--convert FORMAT`                 | Convert every image to `png`, `jpeg`, `webp`, or `avif` |
+| `--lossless`                       | Lossless PNG / WebP / AVIF path                         |
+| `--max-width N` / `--max-height N` | Downscale if larger than N px                           |
+| `--keep-metadata`                  | Preserve EXIF/metadata (stripped by default)            |
+| `--workers N`                      | Parallel workers (default: all CPU cores)               |
+| `--dry-run`                        | Show the plan without writing files                     |
 
 ## Notes
 
