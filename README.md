@@ -1,79 +1,33 @@
 # workopix
 
-High-performance local image compressor & converter for your own machine — like the
-output quality of TinyPNG, but offline, free, and with no upload limits.
-
-`workopix` walks a folder, routes each image to the **best native encoder available**
-(`pngquant`, `oxipng`, `mozjpeg`, `cwebp`), and falls back to Pillow when a binary isn't
-installed. It runs across all your CPU cores and **never touches your originals**.
-
-## Why
-
-Pure-Python compressors can't match TinyPNG because the quality comes from native engines
-like `libimagequant` (the core of `pngquant`) and `mozjpeg`. `workopix` orchestrates those
-engines and handles the batching, parallelism, format conversion, and safety rules around them.
+High-performance local image compressor & converter — TinyPNG-quality output, offline and
+free. `workopix` walks a folder, routes each image to the best native encoder available
+(`pngquant`, `oxipng`, `mozjpeg`, `cwebp`), falls back to Pillow, runs across all CPU cores,
+and **never touches your originals**.
 
 ## Install
-
-### From source (clone the repo)
-
-This is the supported way to run it today — no PyPI account or upload needed.
 
 ```bash
 git clone https://github.com/worko-dev/workopix.git
 cd workopix
-pip install --user .            # core (PNG, JPEG, WebP)
-pip install --user ".[avif]"    # add AVIF support
+pip install --user ".[avif]"     # drop [avif] if you don't need AVIF
 ```
 
-This installs a `workopix` command. If your shell reports `workopix: command
-not found`, the user scripts directory isn't on your `PATH`:
+If your shell then says `workopix: command not found`, the user scripts dir isn't on your
+`PATH`. Add this once to `~/.zshrc` (or `~/.bashrc`):
 
 ```bash
-# macOS / Linux — add this to ~/.zshrc or ~/.bashrc
 export PATH="$(python3 -m site --user-base)/bin:$PATH"
 ```
 
-Prefer an isolated install? Either of these avoids the `PATH` step entirely:
-
-```bash
-pipx install .                  # recommended: isolated, always on PATH
-# — or a virtualenv —
-python3 -m venv .venv && source .venv/bin/activate && pip install ".[avif]"
-```
-
-No install at all — the tool is a single file, so this always works:
-
-```bash
-pip install --user Pillow pillow-avif-plugin
-python3 workopix.py ./photos
-```
-
-### From PyPI (once published)
-
-```bash
-pip install workopix            # core (PNG, JPEG, WebP)
-pip install "workopix[avif]"    # add AVIF support
-```
-
-Either route works using Pillow. To unlock the best output, install the native encoders —
-`workopix` auto-detects whatever is present:
+For the best output quality, install the native encoders (auto-detected if present):
 
 ```bash
 # macOS (Homebrew)
 brew install pngquant oxipng mozjpeg webp
-
 # Ubuntu / Debian
 sudo apt install pngquant oxipng webp libjpeg-turbo-progs
-
-# Windows (scoop)
-scoop install pngquant oxipng libwebp
 ```
-
-> **macOS note:** `mozjpeg` is keg-only and isn't symlinked onto your `PATH` (it conflicts
-> with the system `libjpeg`). You don't need to edit your `PATH` — `workopix` looks in the
-> Homebrew keg location automatically. You can ignore the `LDFLAGS`/`CPPFLAGS` advice Homebrew
-> prints; that's only for compiling C code.
 
 ## Usage
 
@@ -97,37 +51,17 @@ workopix ./photos --dry-run              # preview, write nothing
 | `-q, --quality` | Lossy quality 0–100 (default: 80) |
 | `--convert FORMAT` | Convert every image to `png`, `jpeg`, `webp`, or `avif` |
 | `--lossless` | Lossless PNG / WebP / AVIF path |
-| `--max-width N` | Downscale if wider than N px |
-| `--max-height N` | Downscale if taller than N px |
+| `--max-width N` / `--max-height N` | Downscale if larger than N px |
 | `--keep-metadata` | Preserve EXIF/metadata (stripped by default) |
 | `--workers N` | Parallel workers (default: all CPU cores) |
 | `--dry-run` | Show the plan without writing files |
-| `--no-color` | Disable colored output |
-
-## How it works
-
-| Format | Lossy | Lossless | Fallback |
-|--------|-------|----------|----------|
-| PNG | `pngquant` + `oxipng` squeeze | `oxipng` | Pillow adaptive palette |
-| JPEG | `mozjpeg` (`cjpeg`) | — | Pillow optimize + progressive |
-| WebP | Pillow/`cwebp` (`method 6`) | Pillow lossless | — |
-| AVIF | Pillow + `pillow-avif-plugin` | Pillow | — |
-
-## Safety guarantees
-
-- **Originals are never modified.** Output goes to a separate folder mirroring your structure.
-- **Files never grow.** When optimizing in the same format, `workopix` keeps whichever is
-  smaller, so a file can't accidentally end up larger.
-- **No surprise rotations.** EXIF orientation is baked in before metadata is stripped.
-- **One bad file won't kill the batch** — errors are reported per-file and the run continues.
 
 ## Notes
 
-- AVIF encoding is slower than the other formats (that's the codec, not the tool).
-- `pngquant` will refuse a file if it can't hit the quality floor without too much loss; when
-  that happens `workopix` falls back to copying rather than producing something ugly. Lower
-  `-q` to be more aggressive.
+- Originals are never modified; output goes to a separate folder. When optimizing in the same
+  format, `workopix` keeps whichever file is smaller, so files never grow.
+- AVIF encoding is slower than other formats (that's the codec, not the tool).
 
 ## License
 
-MIT © Zubair Mahboob
+MIT © Worko Dev
